@@ -1,5 +1,5 @@
 # **Team Name**
-#                                                              Sixth Fleet
+# Sixth Fleet
 
 # Student Names:
 * Emad Masri
