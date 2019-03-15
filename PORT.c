@@ -1,54 +1,139 @@
-#ifndef PORT_H   /* Include guard */
-#define PORT_H
-#include <tm4c123gh6pm.h>
-#define unlock 0x4C4F434B 
+#include "stdint.h"
+#include "tm4c123gh6pm.h"
 typedef unsigned char     uint8_t;
+enum Port_PinDirectionType{PORT_PIN_IN=0 , PORT_PIN_OUT=1};
+void SystemInit(){};
+void delayms(int Dm)
+	{
+		while(Dm!=0){
+		NVIC_ST_CTRL_R=0;
+		NVIC_ST_RELOAD_R=1600-1;
+		NVIC_ST_CURRENT_R=0;
+		NVIC_ST_CTRL_R=5;
+		while(NVIC_ST_CTRL_R==0){};
+		NVIC_ST_CTRL_R=1<<16;
+		Dm-=1;
+		}
+}	
 
-enum Port_PinDirectionType {PORT_PIN_IN = 0, PORT_PIN_OUT = 1};
-void Port_Init(uint8_t port_index)
-{
-	SYSCTL->RCGCGPIO|= 1<port_index ;
-switch (port_index){
-	case 0 : {GPIOA->LOCK=unlock ; GPIOA->DEN=0x7f;  }
-	case 1 : {GPIOB->LOCK=unlock ; GPIOB->DEN=0x7f;  }
-	case 2 : {GPIOC->LOCK=unlock ; GPIOC->DEN=0x7f;  }
-	case 3 : {GPIOD->LOCK=unlock ; GPIOD->DEN=0x7f;  }
-  case 4 : {GPIOE->LOCK=unlock ; GPIOE->DEN=0x7f;  }
-	case 5 : {GPIOF->LOCK=unlock ; GPIOF->DEN=0x7f;  }	
-}
-}
-void Port_SetPinDirection(uint8_t port_index, uint8_t pins_mask, uint8_t  pins_direction)
-{
+void Port_Init(uint8_t port_index){
 
-switch (port_index){
-	case 0 : {GPIOA->DIR= (pins_direction)?(GPIOA->DIR|pins_mask):(GPIOA->DIR&~(pins_mask)) ; }
-	case 1 : {GPIOB->DIR= (pins_direction)?(GPIOB->DIR|pins_mask):(GPIOB->DIR&~(pins_mask)) ; }
-	case 2 : {GPIOC->DIR= (pins_direction)?(GPIOC->DIR|pins_mask):(GPIOC->DIR&~(pins_mask)) ;  }
-	case 3 : {GPIOD->DIR= (pins_direction)?(GPIOD->DIR|pins_mask):(GPIOD->DIR&~(pins_mask)) ;  }
-  case 4 : {GPIOE->DIR= (pins_direction)?(GPIOE->DIR|pins_mask):(GPIOE->DIR&~(pins_mask)) ; }
-	case 5 : {GPIOF->DIR= (pins_direction)?(GPIOF->DIR|pins_mask):(GPIOF->DIR&~(pins_mask)) ;  }	
+	switch(port_index){
+		case'0': //portA 
+			SYSCTL_RCGCGPIO_R=0X01;//enable port A 
+			delayms(20);
+			GPIO_PORTA_LOCK_R=0X4C4F434B;
+			GPIO_PORTA_DEN_R=0XFF;
+			break;
+
+		case'1': //port B 
+			SYSCTL_RCGCGPIO_R=0X02;//enable port  B
+			delayms(20);
+			GPIO_PORTB_LOCK_R=0X4C4F434B;
+			GPIO_PORTB_DEN_R=0XFF;
+			break;
+
+		case'2': //port c 
+			SYSCTL_RCGCGPIO_R=0X04;//enable port C
+			delayms(20);
+			GPIO_PORTC_LOCK_R=0X4C4F434B;
+			GPIO_PORTC_DEN_R=0XFF;
+			break;
+
+		case'3': //port D 
+			SYSCTL_RCGCGPIO_R=0X08;//enable port D
+			delayms(20);
+			GPIO_PORTD_LOCK_R=0X4C4F434B;
+			GPIO_PORTD_DEN_R=0XFF;
+			break;
+
+		case'4': //port E 
+			SYSCTL_RCGCGPIO_R=0X10;//enable port E
+			delayms(20);
+			GPIO_PORTE_LOCK_R=0X4C4F434B;
+			GPIO_PORTE_DEN_R=0XF;
+			break;
+
+		case'5': //port F 
+			SYSCTL_RCGCGPIO_R=0X20;//enable port F
+			delayms(20);
+			GPIO_PORTF_LOCK_R=0X4C4F434B;
+			GPIO_PORTF_DEN_R=0XFF;
+			break;
+
+	}
 }
+
+void Port_SetPinDirection(uint8_t port_index,uint8_t pins_mask,enum Port_PinDirectionType pins_direction){
+	
+	if(pins_direction){	
+		switch(port_index){
+			case 0: GPIO_PORTA_DIR_R |=~(pins_mask); break;
+			case 1: GPIO_PORTB_DIR_R |=~(pins_mask); break;
+			case 2: GPIO_PORTC_DIR_R |=~(pins_mask); break;
+			case 3: GPIO_PORTD_DIR_R |=~(pins_mask); break;
+			case 4: GPIO_PORTE_DIR_R |=~(pins_mask); break;
+			case 5: GPIO_PORTF_DIR_R |=~(pins_mask); break;
+		}
+	}
+	else{
+		switch(port_index){
+			case 0: GPIO_PORTA_DIR_R &=~(pins_mask); break;
+			case 1: GPIO_PORTB_DIR_R &=~(pins_mask); break;
+			case 2: GPIO_PORTC_DIR_R &=~(pins_mask); break;
+			case 3: GPIO_PORTD_DIR_R &=~(pins_mask); break;
+			case 4: GPIO_PORTE_DIR_R &=~(pins_mask); break;
+			case 5: GPIO_PORTF_DIR_R &=~(pins_mask); break;
+		}
+	}
 }
-void Port_SetPinPullUp(uint8_t port_index, uint8_t pins_mask, uint8_t enable)
-{
-switch (port_index){
-	case 0 : {GPIOA->PUR= (enable)? pins_mask:0 ; }
-	case 1 : {GPIOB->PUR= (enable)? pins_mask:0 ; }
-	case 2 : {GPIOC->PUR= (enable)? pins_mask:0 ; }
-	case 3 : {GPIOD->PUR= (enable)? pins_mask:0 ; }
-  case 4 : {GPIOE->PUR= (enable)? pins_mask:0 ; }
-	case 5 : {GPIOF->PUR= (enable)? pins_mask:0 ; }	
+
+void Port_SetPinPullUp(uint8_t port_index,uint8_t pins_mask,uint8_t enable){
+	
+	if (enable){
+		switch(port_index){
+			case 0:GPIO_PORTA_PUR_R |=pins_mask; break;
+			case 1:GPIO_PORTB_PUR_R |=pins_mask; break;
+			case 2:GPIO_PORTC_PUR_R |=pins_mask; break;
+			case 3:GPIO_PORTD_PUR_R |=pins_mask; break;
+			case 4:GPIO_PORTE_PUR_R |=pins_mask; break;
+			case 5:GPIO_PORTF_PUR_R |=pins_mask; break;			
+		}	
+	}
+	else{
+		switch(port_index){
+			case 0:GPIO_PORTA_PUR_R &=~ pins_mask; break;
+			case 1:GPIO_PORTB_PUR_R &=~ pins_mask; break;
+			case 2:GPIO_PORTC_PUR_R &=~ pins_mask; break;
+			case 3:GPIO_PORTD_PUR_R &=~ pins_mask; break;
+			case 4:GPIO_PORTE_PUR_R &=~ pins_mask; break;
+			case 5:GPIO_PORTF_PUR_R &=~ pins_mask; break;			
+		}
+	}
 }
+
+
+void Port_SetPinPullDown(uint8_t port_index,uint8_t pins_mask,uint8_t enable){
+	
+	if (enable){
+		switch(port_index){
+			case 0:GPIO_PORTA_PDR_R |=pins_mask; break;
+			case 1:GPIO_PORTB_PDR_R |=pins_mask; break;
+			case 2:GPIO_PORTC_PDR_R |=pins_mask; break;
+			case 3:GPIO_PORTD_PDR_R |=pins_mask; break;
+			case 4:GPIO_PORTE_PDR_R |=pins_mask; break;
+			case 5:GPIO_PORTF_PDR_R |=pins_mask; break;			
+		}	
+	}
+	else{
+		switch(port_index){
+			case 0:GPIO_PORTA_PDR_R &=~ pins_mask; break;
+			case 1:GPIO_PORTB_PDR_R &=~ pins_mask; break;
+			case 2:GPIO_PORTC_PDR_R &=~ pins_mask; break;
+			case 3:GPIO_PORTD_PDR_R &=~ pins_mask; break;
+			case 4:GPIO_PORTE_PDR_R &=~ pins_mask; break;
+			case 5:GPIO_PORTF_PDR_R &=~ pins_mask; break;			
+		}
+	}
 }
-void Port_SetPinPullDown(uint8_t port_index, uint8_t pins_mask, uint8_t enable)
-{
-switch (port_index){
-	case 0 : {GPIOA->PDR= (enable)? pins_mask:0 ; }
-	case 1 : {GPIOB->PDR= (enable)? pins_mask:0 ; }
-	case 2 : {GPIOC->PDR= (enable)? pins_mask:0 ; }
-	case 3 : {GPIOD->PDR= (enable)? pins_mask:0 ; }
-    case 4 : {GPIOE->PDR= (enable)? pins_mask:0 ; }
-	case 5 : {GPIOF->PDR= (enable)? pins_mask:0 ; }	
-}
-}
-#endif // PORT_H
+
