@@ -1,8 +1,9 @@
 #include "stdint.h"
 #include "tm4c123gh6pm.h"
-typedef unsigned char     uint8_t;
-enum Port_PinDirectionType{PORT_PIN_IN=0 , PORT_PIN_OUT=1};
+#include "PORT.h"
+
 void SystemInit(){};
+
 void delayms(int Dm)
 	{
 		while(Dm!=0){

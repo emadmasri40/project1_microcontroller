@@ -1,7 +1,7 @@
 #ifndef DIO_H   /* Include guard */
 #define DIO_H
 
-typedef unsigned char     uint8_t;
+typedef unsigned char uint8_t;
 
 enum Dio_LevelType {STD_LOW = 0, STD_HIGH = 1};
 /*

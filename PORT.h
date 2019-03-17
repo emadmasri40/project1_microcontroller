@@ -1,7 +1,7 @@
 #ifndef PORT_H   /* Include guard */
 #define PORT_H
 
-typedef unsigned char     uint8_t;
+typedef unsigned char uint8_t;
 
 enum Port_PinDirectionType {PORT_PIN_IN = 0, PORT_PIN_OUT = 1};
 /*
