@@ -2,20 +2,18 @@
 #include "tm4c123gh6pm.h"
 #include "PORT.h"
 
-void SystemInit(){};
+void delayms(int Dm){
 
-void delayms(int Dm)
-	{
-		while(Dm!=0){
-		NVIC_ST_CTRL_R=0;
-		NVIC_ST_RELOAD_R=1600-1;
-		NVIC_ST_CURRENT_R=0;
-		NVIC_ST_CTRL_R=5;
-		while(NVIC_ST_CTRL_R==0){};
-		NVIC_ST_CTRL_R=1<<16;
+	while(Dm!=0){
+		SysTick->LOAD=16000-1;
+		SysTick->VAL=0;
+		SysTick->CTRL=5;
+		while(CTRL_R==0 );
+		SysTick->CTRL=1<<16;
 		Dm-=1;
-		}
-}	
+	}
+}
+
 
 void Port_Init(uint8_t port_index){
 
